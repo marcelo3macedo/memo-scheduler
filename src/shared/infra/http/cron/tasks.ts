@@ -1,4 +1,4 @@
-import { FeedDecksTask } from "../../../../modules/decks/useCases/feedDecks/FeedDecksTask";
+import { FeedDecksTask } from "@modules/decks/useCases/feedDecks/FeedDecksTask";
 
 class Tasks {
     get(taskId) {

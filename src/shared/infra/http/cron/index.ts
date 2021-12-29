@@ -1,4 +1,4 @@
-import cronConfig from "../../../../config/cron"
+import cronConfig from "@config/cron"
 import { Tasks } from "./tasks";
 
 const cron = require("node-cron");
