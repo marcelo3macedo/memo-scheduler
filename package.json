@@ -20,8 +20,13 @@
   "dependencies": {
     "config": "^3.3.6",
     "express": "^4.17.2",
+    "express-async-errors": "^3.1.1",
     "fs": "^0.0.1-security",
     "node-cron": "^3.0.0",
-    "ts-node-dev": "^1.1.8"
+    "pg": "^8.7.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node-dev": "^1.1.8",
+    "tsyringe": "^4.6.0",
+    "typeorm": "^0.2.41"
   }
 }
