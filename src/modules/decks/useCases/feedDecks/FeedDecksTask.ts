@@ -1,6 +1,12 @@
+import { container } from 'tsyringe';
+import { FeedDecksUseCase } from './FeedDecksUseCase';
 
 export class FeedDecksTask {
     async handle() {
-        console.log("Executando a tarefa a cada 1 minuto")
+        console.log("here")
+        const feedDecksUseCase = container.resolve(FeedDecksUseCase);
+        const result = await feedDecksUseCase.execute();
+
+        console.log(result)
     }
 }
