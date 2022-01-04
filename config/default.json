@@ -3,7 +3,12 @@
         "tasks": [
             {
                 "name": "feed-decks",
-                "schedule": "* * * * *",
+                "schedule": "0 */1 * * * *",
+                "active": true
+            },
+            {
+                "name": "schedule-decks",
+                "schedule": "*/30 * * * * *",
                 "active": true
             }
         ] 

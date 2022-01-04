@@ -1,12 +1,19 @@
 import IListDecksChildrenDTO from '@modules/decks/dtos/IListDecksChildrenDTO';
 import { getRepository, Repository } from 'typeorm';
 import Deck from '../../entities/Deck';
+import IIndexDecksDTO from '../../dtos/IIndexDecksDTO';
+import IUpdateDecksDTO from '../../dtos/IUpdateDecksDTO';
 import { IDecksRepository } from '../IDecksRepository';
+
 export class DecksRepository implements IDecksRepository {
   private repository: Repository<Deck>;
 
   constructor() {
     this.repository = getRepository(Deck);
+  }
+
+  async index({ deckId }: IIndexDecksDTO): Promise<Deck> {
+    return await this.repository.findOne({ where: { id: deckId }, relations: [ 'frequency' ] })
   }
 
   async pending(): Promise<Deck[]> {
@@ -27,5 +34,13 @@ export class DecksRepository implements IDecksRepository {
       .where('decks.parentId = :parentId')
       .setParameter('parentId', deckId)
       .getMany();
+  }
+
+  async update({ deckId, reviewAt }: IUpdateDecksDTO): Promise<void> {
+    const deck = {
+      reviewAt
+    }
+
+    this.repository.update({ id:deckId }, deck);
   }
 }
