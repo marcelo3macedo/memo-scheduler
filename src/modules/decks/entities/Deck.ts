@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import Frequency from '@modules/frequencies/entities/Frequency';
 
 @Entity('decks')
 export default class Deck {
@@ -22,7 +23,10 @@ export default class Deck {
   isPublic: boolean;
 
   @Column()
-  frequencyId: string;  
+  frequencyId: string;
+
+  @ManyToOne(type => Frequency, frequency => frequency.id)
+  frequency: Frequency;
 
   @ManyToOne(type => Deck, deck => deck.children)
   parent: Deck;

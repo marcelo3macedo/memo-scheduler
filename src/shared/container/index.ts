@@ -1,4 +1,5 @@
 import { container } from 'tsyringe';
+import './providers';
 
 import { IDecksRepository } from '@modules/decks/repositories/IDecksRepository';
 import { DecksRepository } from '@modules/decks/repositories/implementations/DecksRepository';

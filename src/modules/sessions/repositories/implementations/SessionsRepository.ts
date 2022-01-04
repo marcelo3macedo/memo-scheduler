@@ -25,4 +25,24 @@ export class SessionsRepository implements ISessionsRepository {
 
     return session;
   }
+
+  async reviewed(): Promise<Session[]> {
+    const actualDayDate = new Date()
+    const firstDayDate = new Date()
+    firstDayDate.setHours(0,0,0,0);
+
+    const data = this.repository.createQueryBuilder('sessions')
+      .leftJoinAndSelect('sessions.deck', 'deck')
+      .where('sessions.finishedAt > :finishedAt') 
+      .setParameter('finishedAt', firstDayDate.toISOString())
+      .where('deck.reviewAt > :reviewAt')
+      .setParameter('reviewAt', actualDayDate.toISOString())   
+      .getMany()  
+
+    return data
+  }
+
+  async hasActive({ deckId }): Promise<Session> {
+    return await this.repository.findOne({ where: { deckId, finishedAt: null } });
+  }
 }
