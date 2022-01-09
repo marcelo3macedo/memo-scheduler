@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, DeleteDateColumn, ManyToOne, JoinColumn, Timestamp } from 'typeorm';
 import Frequency from '@modules/frequencies/entities/Frequency';
 
 @Entity('decks')

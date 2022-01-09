@@ -28,7 +28,14 @@ export class ScheduleDecksUseCase {
 
         const deck = await this.decksRepository.index({ deckId })
         const { frequency } = deck
-        const reviewAt = this.frequencyProvider.calcNextDate(frequency)
+        const interval = this.frequencyProvider.calcInterval(frequency)
+
+        let deckSessions = await this.sessionsRepository.filter({ deckId: deck.id, interval })
+        const reviewAt = this.frequencyProvider.calcNextDate(deckSessions, frequency)
+
+        if (!reviewAt) {
+          return
+        }
 
         await this.decksRepository.update({ deckId: deck.id, reviewAt })
     })

@@ -35,9 +35,24 @@ export class SessionsRepository implements ISessionsRepository {
       .leftJoinAndSelect('sessions.deck', 'deck')
       .where('sessions.finishedAt > :finishedAt') 
       .setParameter('finishedAt', firstDayDate.toISOString())
-      .where('deck.reviewAt > :reviewAt')
+      .andWhere('deck.reviewAt < :reviewAt')
       .setParameter('reviewAt', actualDayDate.toISOString())   
+      .withDeleted() 
       .getMany()  
+
+    return data
+  }
+
+  async filter({ deckId, interval }): Promise<Session[]> {
+    const data = this.repository.createQueryBuilder('sessions')
+      .leftJoinAndSelect('sessions.deck', 'deck')
+      .where('sessions.finishedAt > :finishedAt') 
+      .setParameter('finishedAt', interval.toISOString())
+      .where('sessions.deckId = :deckId') 
+      .setParameter('deckId', deckId)
+      .withDeleted() 
+      .orderBy('sessions.finishedAt', 'DESC')
+      .getMany()
 
     return data
   }
