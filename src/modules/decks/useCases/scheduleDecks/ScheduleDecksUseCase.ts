@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import { IDecksRepository } from '@modules/decks/repositories/IDecksRepository';
 import { ISessionsRepository } from '@modules/sessions/repositories/ISessionsRepository';
 import { IFrequencyProvider } from '@shared/container/providers/FrequencyProvider/IFrequencyProvider';
@@ -15,29 +16,37 @@ export class ScheduleDecksUseCase {
   ) {}
 
   async execute() {
-    const sessions = await this.sessionsRepository.reviewed();
-    const decksIds = sessions.map(item => item.deckId)
-      .filter((value, index, self) => self.indexOf(value) === index)
+    try {
+      logger.info(`[ScheduleDecksUseCase] Initializing`)
 
-    decksIds.map(async deckId=> {
-        let activeSession = await this.sessionsRepository.hasActive({ deckId })
-        
-        if (activeSession) {
-          return
-        }
+      const sessions = await this.sessionsRepository.reviewed();
+      const decksIds = sessions.map(item => item.deckId)
+        .filter((value, index, self) => self.indexOf(value) === index)
 
-        const deck = await this.decksRepository.index({ deckId })
-        const { frequency } = deck
-        const interval = this.frequencyProvider.calcInterval(frequency)
+      decksIds.map(async deckId=> {
+          let activeSession = await this.sessionsRepository.hasActive({ deckId })
+          
+          if (activeSession) {
+            return
+          }
 
-        let deckSessions = await this.sessionsRepository.filter({ deckId: deck.id, interval })
-        const reviewAt = this.frequencyProvider.calcNextDate(deckSessions, frequency)
+          const deck = await this.decksRepository.index({ deckId })
+          const { frequency } = deck
+          const interval = this.frequencyProvider.calcInterval(frequency)
 
-        if (!reviewAt) {
-          return
-        }
+          let deckSessions = await this.sessionsRepository.filter({ deckId: deck.id, interval })
+          const reviewAt = this.frequencyProvider.calcNextDate(deckSessions, frequency)
 
-        await this.decksRepository.update({ deckId: deck.id, reviewAt })
-    })
+          if (!reviewAt) {
+            return
+          }
+
+          await this.decksRepository.update({ deckId: deck.id, reviewAt })
+      })
+
+      logger.info(`[ScheduleDecksUseCase] Finished - Updated: ${decksIds.length}`)
+    } catch (e) {
+      logger.error(`[ScheduleDecksUseCase] Failed: ${e.message}`)
+    }
   }
 }

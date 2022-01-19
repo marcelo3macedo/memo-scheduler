@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import { getRepository, Repository } from 'typeorm';
 
 import Session from '../../entities/Session';
@@ -22,6 +23,8 @@ export class SessionsRepository implements ISessionsRepository {
     });
 
     await this.repository.save(session);
+
+    logger.info(`[SessionsRepository] Create Deck: ${deck.id} cards: ${cards.length}`)
 
     return session;
   }
