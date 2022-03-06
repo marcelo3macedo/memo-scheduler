@@ -35,6 +35,7 @@
     "express": "^4.17.2",
     "express-async-errors": "^3.1.1",
     "fs": "^0.0.1-security",
+    "ioredis": "^4.28.5",
     "mysql": "^2.18.1",
     "node-cron": "^3.0.0",
     "pg": "^8.7.1",
