@@ -2,6 +2,13 @@ import dayjs from "dayjs";
 import { IFrequencyProvider } from "../IFrequencyProvider";
 
 class FrequencyProvider implements IFrequencyProvider {
+    addDay(interval):Date {
+        const actualDate = Date()
+        const nextDate = dayjs(actualDate).add(interval, "day").startOf("day")
+        
+        return nextDate.toDate()
+    }
+
     calcInterval({ period }):Date {
         const actualDate = Date();
         let minInterval;

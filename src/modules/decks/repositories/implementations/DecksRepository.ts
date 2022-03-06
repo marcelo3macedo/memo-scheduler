@@ -4,6 +4,7 @@ import Deck from '../../entities/Deck';
 import IIndexDecksDTO from '../../dtos/IIndexDecksDTO';
 import IUpdateDecksDTO from '../../dtos/IUpdateDecksDTO';
 import { IDecksRepository } from '../IDecksRepository';
+import logger from '@config/logger';
 
 export class DecksRepository implements IDecksRepository {
   private repository: Repository<Deck>;
@@ -18,7 +19,7 @@ export class DecksRepository implements IDecksRepository {
 
   async pending(): Promise<Deck[]> {
     const query = this.repository.createQueryBuilder('decks')
-      .leftJoinAndSelect("sessions", "sessions", "sessions.deckId = decks.id")
+      .leftJoinAndSelect("sessions", "sessions", "sessions.deckId = decks.id AND sessions.finishedAt IS NULL")
       .where('decks.parentId IS NULL')
       .andWhere('sessions.id IS NULL')
       .andWhere('(decks.reviewAt IS NULL OR decks.reviewAt < :actualDate)', {
