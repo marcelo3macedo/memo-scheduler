@@ -1,6 +1,8 @@
-import logger from '@config/logger';
 import { getRepository, Repository } from 'typeorm';
 
+import logger from '@config/logger';
+import { CACHE_SESSIONS } from 'constants/cacheKeys';
+import CacheManager from 'lib/CacheManager';
 import Session from '../../entities/Session';
 import { ISessionsRepository } from '../ISessionsRepository';
 
@@ -23,6 +25,8 @@ export class SessionsRepository implements ISessionsRepository {
     });
 
     await this.repository.save(session);
+
+    CacheManager.remove(`${CACHE_SESSIONS}:${deck.userId}`)
 
     logger.info(`[SessionsRepository] Create Deck: ${deck.id} cards: ${cards.length}`)
 
