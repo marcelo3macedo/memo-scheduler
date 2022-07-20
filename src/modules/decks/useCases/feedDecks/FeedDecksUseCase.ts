@@ -3,6 +3,7 @@ import { IDecksRepository } from '@modules/decks/repositories/IDecksRepository';
 import ICardsRepository from '@modules/cards/repositories/ICardsRepository';
 import { ISessionsRepository } from '@modules/sessions/repositories/ISessionsRepository';
 import logger from '@config/logger';
+import { IFrequencyProvider } from '@shared/container/providers/FrequencyProvider/IFrequencyProvider';
 
 @injectable()
 export class FeedDecksUseCase {
@@ -12,7 +13,9 @@ export class FeedDecksUseCase {
     @inject('CardsRepository')
     private cardsRepository: ICardsRepository,
     @inject('SessionsRepository')
-    private sessionsRepository: ISessionsRepository
+    private sessionsRepository: ISessionsRepository,
+    @inject('FrequencyProvider')
+    private frequencyProvider: IFrequencyProvider
   ) {}
 
   async execute() {
@@ -22,12 +25,13 @@ export class FeedDecksUseCase {
       logger.info(`[FeedDecksUseCase] Decks to Feed: ${decks.length}`)
       
       decks.map(async d => {
-        let decksIds = [ d.id ]
-        const children = await this.decksRepository.children({ deckId: d.id })      
-        children.map(c => { decksIds.push(c.id) })
-        let cards = await this.cardsRepository.list({ decksIds })
+        let cards = await this.cardsRepository.list({ decksIds: [ d.id ] })
         
         if (cards.length == 0) {
+          let reviewAt = this.frequencyProvider.addDay(1)
+          this.decksRepository.update({ deckId: d.id, reviewAt })
+          
+          logger.info(`[FeedDecksUseCase] Deck without cards: ${d.id}`)
           return
         }
 
